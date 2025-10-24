@@ -1,0 +1,44 @@
+`include "lib_testbench.svh"
+
+module tb_fir_filter();
+
+    `LIB_CLK_GEN(clk, 100_000_000);
+    `LIB_RST_GEN(rst_n, clk, 5);
+    `LIB_DUT_TEST_VECTOR_FILE_READ("/home/kkh/Desktop/kkh/hdl_library/fir_filter/fir_filter/MATLAB/input_data_real.txt", input_data_real);
+    `LIB_DUT_TEST_VECTOR_FILE_READ("/home/kkh/Desktop/kkh/hdl_library/fir_filter/fir_filter/MATLAB/input_data_imag.txt", input_data_imag);
+    //`LIB_DUT_DRIVE_AXI4_STREAM(s_axis_tvalid, s_axis_tlast, s_axis_tdata, 16, clk, rst_n, input_data);
+    //`LIB_DUT_DRIVE_AXI4_STREAM_VERIFY(s_axis_tvalid_real, s_axis_tlast_real, s_axis_tdata_real, 16, clk, rst_n, input_data_real);
+    `LIB_DUT_DRIVE_AXI4_STREAM_COMPLEX(s_axis_tvalid, s_axis_tlast, s_axis_tdata_real, s_axis_tdata_imag, 16, clk, rst_n, input_data_real, input_data_imag);
+   // `LIB_DUT_DRIVE_AXI4_STREAM_COMPLEX_VERIFY(s_axis_tvalid, s_axis_tlast, s_axis_tdata_real, s_axis_tdata_imag, 16, clk, rst_n, input_data_real, input_data_imag);
+    wire m_axis_tvalid;
+    wire m_axis_tlast;
+    wire [2*16-1:0] m_axis_tdata_real;
+    wire [2*16-1:0] m_axis_tdata_imag;
+
+    // My IP
+    lib_fir_filter
+    #(
+        .TAP_LENGTH(41),    // Unique Filter Coeffs length
+        .DIN_BW(16),
+        .DOUT_BW(32),
+        .SYM_TYPE("ODD"),
+        .MODE("REAL")       // REAL or COMPLEX
+    )
+    u_fir_filter
+    (
+        .s_axis_aclk    (clk),
+        .s_axis_aresetn (rst_n),
+        .s_axis_tdata_real (s_axis_tdata_real),
+        .s_axis_tdata_imag (s_axis_tdata_imag),
+        .s_axis_tvalid(s_axis_tvalid),
+        .s_axis_tlast (s_axis_tlast),
+        .m_axis_tvalid (m_axis_tvalid),
+        .m_axis_tdata_real (m_axis_tdata_real),
+        .m_axis_tdata_imag (m_axis_tdata_imag),
+        .m_axis_tlast (m_axis_tlast)
+    );
+
+    //`LIB_COMPARE_WITH_GOLDEN_REAL(clk, rst_n, m_axis_tvalid, m_axis_tdata_imag, m_axis_tlast, "/home/kkh/Desktop/kkh/works/fpga_proj/fir_filter/MATLAB/golden_out_imag.txt");
+    `LIB_COMPARE_WITH_GOLDEN_COMPLEX(clk, rst_n, m_axis_tvalid, m_axis_tdata_real, m_axis_tdata_imag, m_axis_tlast, "/home/kkh/Desktop/kkh/hdl_library/fir_filter/fir_filter/MATLAB/golden_out_real.txt", "/home/kkh/Desktop/kkh/hdl_library/fir_filter/MATLAB/golden_out_imag.txt");
+
+endmodule

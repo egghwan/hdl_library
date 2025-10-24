@@ -1,0 +1,5 @@
+Time resolution is 1 ps
+--- Golden Reference 비교 시작 (복소수) ---
+SUCCESS: 결과가 일치합니다! (총 24656개 복소수 데이터)
+-------------------------------------------
+$finish called at time : 247165 ns : File "/home/kkh/Desktop/kkh/hdl_library/fir_filter/tb/tb_fir_filter.sv" Line 42

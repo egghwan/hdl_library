@@ -1,0 +1,23 @@
+close all;
+clear all;
+rng(1);
+% --- 기존 코드 ---
+fir_in = [1:1:10000]';
+fir_coeffs = [1;3;5;7;7;5;3;1];
+fir_out = conv(fir_in, fir_coeffs,'full');
+
+% --- 추가된 파일 저장 코드 ---
+% fir_in 데이터를 'input_data.txt' 파일로 저장합니다.
+writematrix(fir_in, '/home/kkh/Desktop/kkh/works/fpga_proj/fir_filter/MATLAB/input_data.txt');
+
+% fir_out 데이터를 'golden_output.txt' 파일로 저장합니다.
+writematrix(fir_out, '/home/kkh/Desktop/kkh/works/fpga_proj/fir_filter/MATLAB/golden_output.txt');
+
+disp('파일 저장이 완료되었습니다: input_data.txt, golden_output.txt');
+
+%% EVEN
+% 5 -> Delay 9
+% 4 -> Delay 9
+% 3 -> Delay 7
+% 2 -> Delay 7
+% 1 -> Delay 5
